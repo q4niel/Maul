@@ -8,7 +8,6 @@ deleteImage() {
 }
 
 buildImage() {
-    deleteImage
     podman build -f $containerFile -t $imageName:latest
 }
 
