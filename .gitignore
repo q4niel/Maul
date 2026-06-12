@@ -6,6 +6,7 @@
 !tsk/
 !tsk/**/*
 
+!.dockerignore
 !.gitignore
 !.re-mote
 !Containerfile
