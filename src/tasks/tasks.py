@@ -1,6 +1,6 @@
 from typing import Dict, Callable
-from .test import test
+from . import setup#noqa
 
 dict: Dict[str, Callable[[], None]] = {
-    "test": lambda: test()
+    "setup": lambda: setup.task()
 }
