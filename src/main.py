@@ -1,5 +1,6 @@
 from typing import List
 import sys
+import os
 import util
 import tasks
 
@@ -14,6 +15,25 @@ def main() -> None:
     ]
     for p in prints:
         print(util.strColour(util.Colour.Maul, p))
+
+    # Ensure a project mounting point
+    if not os.path.exists("mnt") or not os.path.isdir("mnt"):
+        print (
+            util.strColour(util.Colour.Red, "| Error:"),
+            "No mounting point exists!"
+        )
+        print (
+            util.strColour(util.Colour.Red, "|"),
+            "Always mount your project with:"
+        )
+        print (
+            util.strColour(util.Colour.Red, "|"),
+            util.strColour(util.Colour.Cyan, "YOUR_CONTAINER_ENGINE"),
+            "run -v",
+            util.strColour(util.Colour.Cyan, "PATH_TO_YOUR_PROJECT") + ":/Maul/mnt maul:latest",
+            "--" + util.strColour(util.Colour.Cyan, "TASK_TO_RUN")
+        )
+        return
 
     # Validate Flags
     flags: List[str] = []

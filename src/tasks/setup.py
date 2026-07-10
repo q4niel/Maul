@@ -1,3 +1,5 @@
+import os
+
 def task() -> None:
-    print("setup")
+    os.makedirs("mnt/.maul")
 #task()
