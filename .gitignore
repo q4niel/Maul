@@ -7,7 +7,10 @@
 !tsk/**/*
 
 !tst/
-!tst/**/*
+!tst/*
+
+!tst/hello_world/src/
+!tst/hello_world/src/**/*
 
 !.dockerignore
 !.gitignore
