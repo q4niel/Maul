@@ -12,5 +12,5 @@ buildImage() {
 }
 
 runImage() {
-    podman run -v $(pwd)/mnt:/Maul/mnt $imageName:latest "$@"
+    podman run -v $(pwd)/mnt:/Maul/tst $imageName:latest "$@"
 }
