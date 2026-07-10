@@ -2,4 +2,4 @@
 cd "$(realpath -m "$0/../..")"
 source "tsk/.inc.sh"
 
-buildImage
+podman build -f $containerFile -t $imageName:latest

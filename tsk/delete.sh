@@ -2,4 +2,4 @@
 cd "$(realpath -m "$0/../..")"
 source "tsk/.inc.sh"
 
-deleteImage
+podman rmi -f $imageName:latest
