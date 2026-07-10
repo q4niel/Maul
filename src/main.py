@@ -13,7 +13,7 @@ def main() -> None:
         "\n" * 5
     ]
     for p in prints:
-        print(util.strColour(util.Colour.Cyan, p))
+        print(util.strColour(util.Colour.Maul, p))
 
     # Validate Flags
     flags: List[str] = []
