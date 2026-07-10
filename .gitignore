@@ -1,13 +1,13 @@
 *
 
-!mnt/
-!mnt/**/*
-
 !src/
 !src/**/*
 
 !tsk/
 !tsk/**/*
+
+!tst/
+!tst/**/*
 
 !.dockerignore
 !.gitignore
