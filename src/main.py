@@ -58,6 +58,7 @@ def main() -> None:
         print("Task", util.strColour(util.Colour.Cyan, selectedTask), "doesn't exist")
         return
 
+    util.Config.init()
     tasks.dict[selectedTask]()
     return
 #main()
