@@ -9,8 +9,8 @@
 !tst/
 !tst/*
 
-!tst/hello_world/src/
-!tst/hello_world/src/**/*
+!tst/hello_cxx/src/
+!tst/hello_cxx/src/**/*
 
 !.dockerignore
 !.gitignore

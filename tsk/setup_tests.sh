@@ -6,4 +6,4 @@ foo() {
     podman run -itv $(pwd)/$1:/Maul/mnt $imageName:latest --setup
 }
 
-foo tst/hello_world
+foo tst/hello_cxx
