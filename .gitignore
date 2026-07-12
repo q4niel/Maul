@@ -9,6 +9,9 @@
 !tst/
 !tst/*
 
+!tst/hello_c/src/
+!tst/hello_c/src/**/*
+
 !tst/hello_cxx/src/
 !tst/hello_cxx/src/**/*
 
