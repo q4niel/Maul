@@ -5,6 +5,8 @@ import util
 
 class Config:
     isValid: bool = False
+    hExtension: str = "h"
+    cExtension: str = "c"
     hxxExtension: str = "hpp"
     cxxExtension: str = "cpp"
     binaries: list[util.Binary] = []
@@ -39,6 +41,12 @@ class Config:
     def evalToml(file: BinaryIO) -> None:
         for key, value in tomllib.load(file).items():
             match key:
+                case "h_extension":
+                    Config.hExtension = value
+
+                case "c_extension":
+                    Config.cExtension = value
+
                 case "hxx_extension":
                     Config.hxxExtension = value
 
