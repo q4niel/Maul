@@ -9,6 +9,12 @@ class Config:
     cExtension: str = "c"
     hxxExtension: str = "hpp"
     cxxExtension: str = "cpp"
+    globalCompFlags: list[str] = []
+    globalCompCFlags: list[str] = []
+    globalCompCxxFlags: list[str] = []
+    globalLinkFlags: list[str] = []
+    globalLinkCFlags: list[str] = []
+    globalLinkCxxFlags: list[str] = []
     binaries: list[util.Binary] = []
 
     @staticmethod
@@ -53,6 +59,20 @@ class Config:
                 case "cxx_extension":
                     Config.cxxExtension = value
 
+                case "global_comp_flags":
+                    Config.globalCompFlags = value
+                case "global_comp_c_flags":
+                    Config.globalCompCFlags = value
+                case "global_comp_cxx_flags":
+                    Config.globalCompCxxFlags = value
+
+                case "global_link_flags":
+                    Config.globalLinkFlags = value
+                case "global_link_c_flags":
+                    Config.globalLinkCFlags = value
+                case "global_link_cxx_flags":
+                    Config.globalLinkCxxFlags = value
+
                 case "binary":
                     for name, info in value.items():
                         bin: util.Binary = util.Binary()
@@ -71,6 +91,20 @@ class Config:
                                             bin.type = util.Binary.Type.staticlib
                                         case "dynamic_lib":
                                             bin.type = util.Binary.Type.dynamiclib
+
+                                case "comp_flags":
+                                    bin.compFlags = v
+                                case "comp_c_flags":
+                                    bin.compCFlags = v
+                                case "comp_cxx_flags":
+                                    bin.compCxxFlags = v
+
+                                case "link_flags":
+                                    bin.linkFlags = v
+                                case "link_c_flags":
+                                    bin.linkCFlags = v
+                                case "link_cxx_flags":
+                                    bin.linkCxxFlags = v
 
                                 case "source_directory":
                                     bin.sourceDirectory = v

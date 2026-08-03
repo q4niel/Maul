@@ -12,6 +12,12 @@ class Binary:
         self.name: str = ""
         self.filename = "mauled_binary"
         self.type: Binary.Type = Binary.Type.none
+        self.compFlags: list[str] = []
+        self.compCFlags: list[str] = []
+        self.compCxxFlags: list[str] = []
+        self.linkFlags: list[str] = []
+        self.linkCFlags: list[str] = []
+        self.linkCxxFlags: list[str] = []
         self.sourceDirectory: str = "src"
         self.sources: list[str] = []
     #__init__()

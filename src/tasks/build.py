@@ -28,19 +28,65 @@ def task() -> None:
 #task()
 
 def buildBin(bin: util.Binary, workerDir: str) -> None:
+    containsCxx: bool = False
+
     for src in bin.sources:
-        subprocess.run ([
-            "clang++",
-            "-std=c++23",
-            "-c",
-            f"mnt/{bin.sourceDirectory}/{src}.{cfg.cxxExtension}",
-            "-o",
-            f"{workerDir}/{f"{bin.sourceDirectory}/{src}".replace("/", "__")}.o"
-        ])
+        srcPath: str = f"mnt/{bin.sourceDirectory}/{src}"
+
+        def compile(cxx: bool, path: str):
+            subprocess.run ([
+                f"clang{"++" if cxx else ""}",
+                *(
+                    cfg.globalCompFlags +
+                    bin.compFlags +
+                    (
+                        cfg.globalCompCxxFlags + bin.compCxxFlags
+                        if cxx else
+                        cfg.globalCompCFlags + bin.compCFlags
+                    )
+                ),
+                "-c",
+                f"{srcPath}.{cfg.cxxExtension if cxx else cfg.cExtension}",
+                "-o",
+                f"{workerDir}/{f"{bin.sourceDirectory}/{src}".replace("/", "__")}.o"
+            ])
+
+        if os.path.exists(nPath:= f"{srcPath}.{cfg.cExtension}"):
+            compile(False, nPath)
+        elif os.path.exists(nPath:= f"{srcPath}.{cfg.cxxExtension}"):
+            containsCxx = True
+            compile(True, nPath)
+        else:
+            print (
+                util.strColour(util.Colour.Red, "| Error:"),
+                "Unresolved Source Path"
+            )
+            print (
+                util.strColour(util.Colour.Red, "|"),
+                "Neither",
+                util.strColour (
+                    util.Colour.Cyan,
+                    f"{srcPath}.{cfg.cExtension}"
+                ),
+                "or",
+                util.strColour (
+                    util.Colour.Cyan,
+                    f"{srcPath}.{cfg.cxxExtension}"
+                ),
+                "exists!"
+            )
 
     subprocess.run ([
-        "clang++",
-        "-std=c++23",
+        f"clang{"++" if containsCxx else ""}",
+        *(
+            cfg.globalLinkFlags +
+            bin.linkFlags +
+            (
+                cfg.globalLinkCxxFlags + bin.linkCxxFlags
+                if containsCxx else
+                cfg.globalLinkCFlags + bin.linkCFlags
+            )
+        ),
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
         "-o",
         f"mnt/.maul/out/{bin.filename}"

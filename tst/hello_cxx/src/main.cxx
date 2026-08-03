@@ -1,6 +1,6 @@
 #include <print>
 
 auto main(int argc, char **argv) -> int {
-    std::println("hello world");
+    std::println("hello c++ world");
     return 0;
 }
