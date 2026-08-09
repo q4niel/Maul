@@ -41,7 +41,7 @@ class Config:
                             return
 
                     Config.isValid = True
-    #__init__()
+    #init()
 
     @staticmethod
     def evalToml(file: BinaryIO) -> None:
