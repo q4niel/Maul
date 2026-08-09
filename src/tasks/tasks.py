@@ -1,7 +1,7 @@
 from typing import Dict, Callable
-from . import setup, build#noqa
+from . import task_gen, build#noqa
 
 dict: Dict[str, Callable[[], None]] = {
     "build": lambda: build.task(),
-    "setup": lambda: setup.task()
+    "task-gen": lambda: task_gen.task()
 }
