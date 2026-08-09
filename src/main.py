@@ -59,8 +59,23 @@ def main() -> None:
         return
 
     util.Config.init()
-    tasks.dict[selectedTask]()
-    return
+    util.LocalConfig.init()
+
+    def invalidConfigMsg(string: str) -> None:
+        print (
+            util.strColour(util.Colour.Red, "| Error: "),
+            end=""
+        )
+        print(f"{string} not valid, exiting process")
+
+    if not util.Config.isValid and not util.LocalConfig.isValid:
+        invalidConfigMsg("maul and maul.local configs are")
+    elif not util.Config.isValid:
+        invalidConfigMsg("maul config is")
+    elif not util.LocalConfig.isValid:
+        invalidConfigMsg("maul.local config is")
+    else:
+        tasks.dict[selectedTask]()
 #main()
 
 if __name__ == "__main__": main()#noqa

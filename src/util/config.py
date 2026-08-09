@@ -2,9 +2,10 @@ import os
 import tomllib
 from typing import BinaryIO
 import util
+from enum import Enum
 
 class Config:
-    isValid: bool = False
+    isValid: bool = True
     hExtension: str = "h"
     cExtension: str = "c"
     hxxExtension: str = "hpp"
@@ -22,14 +23,6 @@ class Config:
         for lang in [
             "toml"
         ]:
-            if Config.isValid:
-                print (
-                    util.strColour(util.Colour.Red, "| Error: "),
-                    end=""
-                )
-                print("Multiple config files is not allowed")
-                break
-
             if (os.path.exists(p:= f"mnt/maul.{lang}")
             and os.path.isfile(p)
             ):
@@ -39,8 +32,8 @@ class Config:
                             Config.evalToml(file)
                         case _:
                             return
-
-                    Config.isValid = True
+            else:
+                Config.isValid = False
     #init()
 
     @staticmethod
@@ -115,3 +108,48 @@ class Config:
                         Config.binaries.append(bin)
     #evalToml()
 #class Config
+
+class LocalConfig:
+    class TaskType(Enum):
+        none = 0
+        linuxShell = 1
+    #class TaskType
+
+    isValid: bool = True
+    taskType: TaskType = TaskType.none
+
+    @staticmethod
+    def init() -> None:
+        for lang in [
+            "toml"
+        ]:
+            if (os.path.exists(p:= f"mnt/maul.local.{lang}")
+                and os.path.isfile(p)
+                ):
+                    with open(p, "rb") as file:
+                        match lang:
+                            case "toml":
+                                LocalConfig.evalToml(file)
+                            case _:
+                                return
+            else:
+                LocalConfig.isValid = False
+    #init()
+
+    @staticmethod
+    def evalToml(file: BinaryIO) -> None:
+        for key, value in tomllib.load(file).items():
+            match key:
+                case "task_type":
+                    match value:
+                        case "linux_shell":
+                            LocalConfig.taskType = LocalConfig.TaskType.linuxShell
+                        case _:
+                            print (
+                                util.strColour(util.Colour.Red, "| Error: "),
+                                end=""
+                            )
+                            print("Invalid task type in local config")
+                            LocalConfig.isValid = False
+    #evalToml()
+#class LocalConfig
