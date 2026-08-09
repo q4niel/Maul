@@ -1,0 +1,7 @@
+hxx_extension = "hxx"
+cxx_extension = "cxx"
+global_comp_cxx_flags = ["-std=c++23"]
+
+[binary.hello_world]
+type = "executable"
+sources = ["main"]

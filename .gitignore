@@ -9,9 +9,11 @@
 !tst/
 !tst/*
 
+!tst/hello_c/maul.toml
 !tst/hello_c/src/
 !tst/hello_c/src/**/*
 
+!tst/hello_cxx/maul.toml
 !tst/hello_cxx/src/
 !tst/hello_cxx/src/**/*
 

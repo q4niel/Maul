@@ -1,0 +1,5 @@
+global_comp_c_flags = ["-std=c23"]
+
+[binary.hello_world]
+type = "executable"
+sources = ["main"]
