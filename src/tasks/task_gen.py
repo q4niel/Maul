@@ -5,7 +5,7 @@ from . import tasks
 
 def genLinuxBash(tsk: str): return (
     "#!/bin/bash\n"
-    f"podman run -itv $(realpath -m $0/../../..):/Maul/mnt maul:latest --{tsk}"
+    f"{util.LocalConfig.containerEngine} run -itv $(realpath -m $0/../../..):/Maul/mnt maul:latest --{tsk}"
 )
 
 def task() -> None:

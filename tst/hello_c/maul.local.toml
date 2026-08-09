@@ -1,1 +1,2 @@
+container_engine = "podman"
 task_type = "linux_shell"

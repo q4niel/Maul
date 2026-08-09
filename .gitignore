@@ -5,6 +5,7 @@
 
 !tsk/
 !tsk/**/*
+.container_engine
 
 !tst/
 !tst/*

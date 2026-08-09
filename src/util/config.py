@@ -116,6 +116,7 @@ class LocalConfig:
     #class TaskType
 
     isValid: bool = True
+    containerEngine: str = "none"
     taskType: TaskType = TaskType.none
 
     @staticmethod
@@ -134,12 +135,30 @@ class LocalConfig:
                                 return
             else:
                 LocalConfig.isValid = False
+
+        if LocalConfig.containerEngine == "none":
+            LocalConfig.isValid = False
     #init()
 
     @staticmethod
     def evalToml(file: BinaryIO) -> None:
         for key, value in tomllib.load(file).items():
             match key:
+                case "container_engine":
+                    match value:
+                        case "podman":
+                            LocalConfig.containerEngine = "podman"
+                        case "docker":
+                            LocalConfig.containerEngine = "docker"
+                        case _:
+                            print (
+                                util.strColour(util.Colour.Red, "| Error: "),
+                                end=""
+                            )
+                            print("Invalid container engine in local config")
+                            LocalConfig.isValid = False
+                            break
+
                 case "task_type":
                     match value:
                         case "linux_shell":
@@ -151,5 +170,6 @@ class LocalConfig:
                             )
                             print("Invalid task type in local config")
                             LocalConfig.isValid = False
+                            break
     #evalToml()
 #class LocalConfig
