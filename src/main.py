@@ -1,6 +1,5 @@
 from typing import List
-import sys
-import os
+import sys, os, argparse
 import util
 import tasks
 
@@ -35,29 +34,6 @@ def main() -> None:
         )
         return
 
-    # Validate Flags
-    flags: List[str] = []
-    for i, a in enumerate(sys.argv):
-        if i == 0 or not a.startswith("--"): continue#noqa
-        flags.append(a.removeprefix("--"))
-
-    # Ensure one task flag
-    selectedTask: str = "NONE"
-    for f in flags:
-        if not "NONE" == selectedTask:
-            print(util.strColour(util.Colour.Red, "| Error: "), end="")
-            print("Task flag", util.strColour(util.Colour.Cyan, selectedTask), "already provided")
-            print(util.strColour(util.Colour.Red, "|"), "Multiple tasks is not allowed")
-            return
-
-        selectedTask = f
-
-    # Ensure selected task exists
-    if selectedTask not in tasks.dict:
-        print(util.strColour(util.Colour.Red, "| Error: "), end="")
-        print("Task", util.strColour(util.Colour.Cyan, selectedTask), "doesn't exist")
-        return
-
     util.Config.init()
     util.LocalConfig.init()
 
@@ -70,12 +46,34 @@ def main() -> None:
 
     if not util.Config.isValid and not util.LocalConfig.isValid:
         invalidConfigMsg("maul and maul.local configs are")
+        return
     elif not util.Config.isValid:
         invalidConfigMsg("maul config is")
+        return
     elif not util.LocalConfig.isValid:
         invalidConfigMsg("maul.local config is")
-    else:
-        tasks.dict[selectedTask]()
+        return
+
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
+    group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument (
+        "-g",
+        "--taskgen",
+        action="store_true",
+        help="Generate tasks for easier execution of Maul, define type in maul.local config"
+    )
+    group.add_argument (
+        "-b",
+        "--build",
+        type=str,
+        help="Run the provided builder, defined in maul.local config"
+    )
+    args: argparse.Namespace = parser.parse_args()
+
+    if args.taskgen:
+        tasks.taskgen()
+    elif args.build:
+        tasks.build(args.build)
 #main()
 
 if __name__ == "__main__": main()#noqa

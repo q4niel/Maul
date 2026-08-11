@@ -2,6 +2,13 @@ hxx_extension = "hxx"
 cxx_extension = "cxx"
 global_comp_cxx_flags = ["-std=c++23"]
 
+[builder.release]
+binaries = ["hello_world"]
+
+[builder.debug]
+comp_flags = ["-DDEBUG"]
+binaries = ["hello_world"]
+
 [binary.hello_world]
 type = "executable"
 sources = ["main"]

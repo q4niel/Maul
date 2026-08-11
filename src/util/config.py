@@ -3,6 +3,7 @@ import tomllib
 from typing import BinaryIO
 import util
 from enum import Enum
+from typing import Any
 
 class Config:
     isValid: bool = True
@@ -16,7 +17,8 @@ class Config:
     globalLinkFlags: list[str] = []
     globalLinkCFlags: list[str] = []
     globalLinkCxxFlags: list[str] = []
-    binaries: list[util.Binary] = []
+    builders: dict[str, util.Builder] = {}
+    binaries: dict[str, util.Binary] = {}
 
     @staticmethod
     def init() -> None:
@@ -38,6 +40,8 @@ class Config:
 
     @staticmethod
     def evalToml(file: BinaryIO) -> None:
+        blds: Any = None
+
         for key, value in tomllib.load(file).items():
             match key:
                 case "h_extension":
@@ -65,6 +69,9 @@ class Config:
                     Config.globalLinkCFlags = value
                 case "global_link_cxx_flags":
                     Config.globalLinkCxxFlags = value
+
+                case "builder":
+                    blds = value
 
                 case "binary":
                     for name, info in value.items():
@@ -105,7 +112,79 @@ class Config:
                                 case "sources":
                                     bin.sources = v
 
-                        Config.binaries.append(bin)
+                        if bin.name in Config.binaries:
+                            Config.isValid = False
+                            print (
+                                util.strColour(util.Colour.Red, "| Error: "),
+                                end=""
+                            )
+                            print("Binary ", end="")
+                            print (
+                                util.strColour(util.Colour.Cyan, bin.name),
+                                end=""
+                            )
+                            print(" has multiple definitions in config")
+                            break
+                        else:
+                            Config.binaries[bin.name] = bin
+
+        if blds is None: return
+
+        for name, info in blds.items():
+            bld: util.Builder = util.Builder()
+            bld.name = name
+
+            for k, v in info.items():
+                match k:
+                    case "comp_flags":
+                        bld.compFlags = v
+                    case "comp_c_flags":
+                        bld.compCFlags = v
+                    case "comp_cxx_flags":
+                        bld.compCxxFlags = v
+
+                    case "link_flags":
+                        bld.linkFlags = v
+                    case "link_c_flags":
+                        bld.linkCFlags = v
+                    case "link_cxx_flags":
+                        bld.linkCxxFlags = v
+
+                    case "binaries":
+                        for string in v:
+                            if string not in Config.binaries:
+                                print (
+                                    util.strColour(util.Colour.Red, "| Error: "),
+                                    end=""
+                                )
+                                print("Use of undefined binary ", end="")
+                                print (
+                                    util.strColour(util.Colour.Cyan, string),
+                                    end=""
+                                )
+                                print(" in builder ", end="")
+                                print (
+                                    util.strColour(util.Colour.Cyan, bld.name)
+                                )
+                                Config.isValid = False
+                                break
+                            else:
+                                bld.binaries.append(string)
+            if bld.name in Config.builders:
+                print (
+                    util.strColour(util.Colour.Red, "| Error: "),
+                    end=""
+                )
+                print("Builder ", end="")
+                print (
+                    util.strColour(util.Colour.Cyan, bld.name),
+                    end=""
+                )
+                print(" has multiple definitions in config")
+                Config.isValid = False
+                break
+            else:
+                Config.builders[bld.name] = bld
     #evalToml()
 #class Config
 

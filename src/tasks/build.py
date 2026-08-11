@@ -4,7 +4,7 @@ import util
 from util import Config as cfg
 import subprocess
 
-def task() -> None:
+def task(builder: str) -> None:
     if not cfg.isValid:
         print(util.strColour(util.Colour.Red, "| Error: "), end="")
         print("Invalid Config File!")
@@ -21,13 +21,25 @@ def task() -> None:
         shutil.rmtree(workerDir)
     os.mkdir(workerDir)
 
-    for bin in cfg.binaries:
-        buildBin(bin, workerDir)
+    if builder not in cfg.builders:
+        print (
+            util.strColour(util.Colour.Red, "| Error: "),
+            end=""
+        )
+        print("Builder ", end="")
+        print (
+            util.strColour(util.Colour.Cyan, builder),
+            end=""
+        )
+        print(" has no definition in config")
+    else:
+        for bin in cfg.builders[builder].binaries:
+            buildBin(cfg.builders[builder], cfg.binaries[bin], workerDir)
 
     shutil.rmtree(workerDir)
 #task()
 
-def buildBin(bin: util.Binary, workerDir: str) -> None:
+def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str) -> None:
     containsCxx: bool = False
 
     for src in bin.sources:
@@ -39,10 +51,15 @@ def buildBin(bin: util.Binary, workerDir: str) -> None:
                 *(
                     cfg.globalCompFlags +
                     bin.compFlags +
+                    bldr.compFlags +
                     (
-                        cfg.globalCompCxxFlags + bin.compCxxFlags
+                        cfg.globalCompCxxFlags +
+                        bin.compCxxFlags +
+                        bldr.compCxxFlags
                         if cxx else
-                        cfg.globalCompCFlags + bin.compCFlags
+                        cfg.globalCompCFlags +
+                        bin.compCFlags +
+                        bldr.compCFlags
                     )
                 ),
                 "-c",
@@ -81,10 +98,15 @@ def buildBin(bin: util.Binary, workerDir: str) -> None:
         *(
             cfg.globalLinkFlags +
             bin.linkFlags +
+            bldr.linkFlags +
             (
-                cfg.globalLinkCxxFlags + bin.linkCxxFlags
+                cfg.globalLinkCxxFlags +
+                bin.linkCxxFlags +
+                bldr.linkCxxFlags
                 if containsCxx else
-                cfg.globalLinkCFlags + bin.linkCFlags
+                cfg.globalLinkCFlags +
+                bin.linkCFlags +
+                bldr.linkCFlags
             )
         ),
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
