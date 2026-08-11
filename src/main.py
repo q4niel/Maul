@@ -4,45 +4,34 @@ import util
 import tasks
 
 def main() -> None:
-    msg: str = "Welcome to Maul"
-    prints: List[str] = [
-        "\n" * 10,
-        "-" * len(msg),
-        f"\n{msg}\n",
-        "-" * len(msg),
-        "\n" * 5
-    ]
-    for p in prints:
-        print(util.strColour(util.Colour.Maul, p))
-
     # Ensure a project mounting point
     if not os.path.exists("mnt") or not os.path.isdir("mnt"):
-        print (
-            util.strColour(util.Colour.Red, "| Error:"),
-            "No mounting point exists!"
-        )
-        print (
-            util.strColour(util.Colour.Red, "|"),
-            "Always mount your project with:"
-        )
-        print (
-            util.strColour(util.Colour.Red, "|"),
-            util.strColour(util.Colour.Cyan, "YOUR_CONTAINER_ENGINE"),
-            "run -v",
-            util.strColour(util.Colour.Cyan, "PATH_TO_YOUR_PROJECT") + ":/Maul/mnt maul:latest",
-            "--" + util.strColour(util.Colour.Cyan, "TASK_TO_RUN")
-        )
+        (util.Printer()
+            .red("| Error: ")
+            .default("No mounting point exists!")
+            .newline()
+
+            .red("| ")
+            .default("Always mount your project with:")
+            .newline()
+
+            .red("| ")
+            .cyan("YOUR_CONTAINER_ENGINE ")
+            .default("run -v ")
+            .cyan("PATH_TO_YOUR_PROJECT")
+            .default(":/Maul/mnt maul:latest --")
+            .cyan("TASK_TO_RUN")
+        .exec())
         return
 
     util.Config.init()
     util.LocalConfig.init()
 
     def invalidConfigMsg(string: str) -> None:
-        print (
-            util.strColour(util.Colour.Red, "| Error: "),
-            end=""
-        )
-        print(f"{string} not valid, exiting process")
+        (util.Printer()
+            .red("| Error: ")
+            .default(f"{string} not valid, exiting process")
+        .exec())
 
     if not util.Config.isValid and not util.LocalConfig.isValid:
         invalidConfigMsg("maul and maul.local configs are")
@@ -76,4 +65,4 @@ def main() -> None:
         tasks.build(args.build)
 #main()
 
-if __name__ == "__main__": main()#noqa
+if __name__ == "__main__": main()

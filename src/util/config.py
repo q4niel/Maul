@@ -114,16 +114,12 @@ class Config:
 
                         if bin.name in Config.binaries:
                             Config.isValid = False
-                            print (
-                                util.strColour(util.Colour.Red, "| Error: "),
-                                end=""
-                            )
-                            print("Binary ", end="")
-                            print (
-                                util.strColour(util.Colour.Cyan, bin.name),
-                                end=""
-                            )
-                            print(" has multiple definitions in config")
+                            (util.Printer()
+                                .red("| Error: ")
+                                .default("Binary ")
+                                .cyan(bin.name)
+                                .default(" has multiple definitions in config")
+                            .exec())
                             break
                         else:
                             Config.binaries[bin.name] = bin
@@ -153,34 +149,24 @@ class Config:
                     case "binaries":
                         for string in v:
                             if string not in Config.binaries:
-                                print (
-                                    util.strColour(util.Colour.Red, "| Error: "),
-                                    end=""
-                                )
-                                print("Use of undefined binary ", end="")
-                                print (
-                                    util.strColour(util.Colour.Cyan, string),
-                                    end=""
-                                )
-                                print(" in builder ", end="")
-                                print (
-                                    util.strColour(util.Colour.Cyan, bld.name)
-                                )
+                                (util.Printer()
+                                    .red("| Error: ")
+                                    .default("Use of undefined binary ")
+                                    .cyan(string)
+                                    .default(" in builder ")
+                                    .cyan(bld.name)
+                                .exec())
                                 Config.isValid = False
                                 break
                             else:
                                 bld.binaries.append(string)
             if bld.name in Config.builders:
-                print (
-                    util.strColour(util.Colour.Red, "| Error: "),
-                    end=""
-                )
-                print("Builder ", end="")
-                print (
-                    util.strColour(util.Colour.Cyan, bld.name),
-                    end=""
-                )
-                print(" has multiple definitions in config")
+                (util.Printer()
+                    .red("| Error: ")
+                    .default("Builder ")
+                    .cyan(bld.name)
+                    .default(" has multiple definitions in config")
+                .exec())
                 Config.isValid = False
                 break
             else:
@@ -230,11 +216,10 @@ class LocalConfig:
                         case "docker":
                             LocalConfig.containerEngine = "docker"
                         case _:
-                            print (
-                                util.strColour(util.Colour.Red, "| Error: "),
-                                end=""
-                            )
-                            print("Invalid container engine in local config")
+                            (util.Printer()
+                                .red("| Error: ")
+                                .default("Invalid container engine in local config")
+                            .exec())
                             LocalConfig.isValid = False
                             break
 
@@ -243,11 +228,10 @@ class LocalConfig:
                         case "linux_shell":
                             LocalConfig.taskType = LocalConfig.TaskType.linuxShell
                         case _:
-                            print (
-                                util.strColour(util.Colour.Red, "| Error: "),
-                                end=""
-                            )
-                            print("Invalid task type in local config")
+                            (util.Printer()
+                                .red("| Error: ")
+                                .default("Invalid task type in local config")
+                            .exec())
                             LocalConfig.isValid = False
                             break
     #evalToml()

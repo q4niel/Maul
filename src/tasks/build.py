@@ -6,15 +6,25 @@ import subprocess
 
 def task(builder: str) -> None:
     if not cfg.isValid:
-        print(util.strColour(util.Colour.Red, "| Error: "), end="")
-        print("Invalid Config File!")
+        (util.Printer()
+            .red("| Error: ")
+            .default("Invalid Config File!")
+        .exec())
         return
 
     if not os.path.exists(maulDir:= "mnt/.maul"):
-        print(util.strColour(util.Colour.Red, "| Error: "), end="")
-        print("Directory", util.strColour(util.Colour.Cyan, maulDir), "does not exist!")
-        print(util.strColour(util.Colour.Red, "| "), end="")
-        print("Have the", util.strColour(util.Colour.Cyan, "setup"), "task been ran?")
+        (util.Printer()
+            .red("| Error: ")
+            .default("Directory ")
+            .cyan(maulDir)
+            .default(" does not exist!")
+            .newline()
+
+            .red("| ")
+            .default("Have the ")
+            .cyan("taskgen ")
+            .default("task been ran?")
+        .exec())
         return
 
     if os.path.exists(workerDir:= f"{maulDir}/worker"):
@@ -22,16 +32,12 @@ def task(builder: str) -> None:
     os.mkdir(workerDir)
 
     if builder not in cfg.builders:
-        print (
-            util.strColour(util.Colour.Red, "| Error: "),
-            end=""
-        )
-        print("Builder ", end="")
-        print (
-            util.strColour(util.Colour.Cyan, builder),
-            end=""
-        )
-        print(" has no definition in config")
+        (util.Printer()
+            .red("| Error: ")
+            .default("Builder ")
+            .cyan(builder)
+            .default(" has no definition in config")
+        .exec())
     else:
         for bin in cfg.builders[builder].binaries:
             buildBin(cfg.builders[builder], cfg.binaries[bin], workerDir)
@@ -74,24 +80,18 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str) -> None:
             containsCxx = True
             compile(True, nPath)
         else:
-            print (
-                util.strColour(util.Colour.Red, "| Error:"),
-                "Unresolved Source Path"
-            )
-            print (
-                util.strColour(util.Colour.Red, "|"),
-                "Neither",
-                util.strColour (
-                    util.Colour.Cyan,
-                    f"{srcPath}.{cfg.cExtension}"
-                ),
-                "or",
-                util.strColour (
-                    util.Colour.Cyan,
-                    f"{srcPath}.{cfg.cxxExtension}"
-                ),
-                "exists!"
-            )
+            (util.Printer()
+                .red("| Error: ")
+                .default("Unresolved Source Path")
+                .newline()
+
+                .red("| ")
+                .default("Neither ")
+                .cyan(f"{srcPath}.{cfg.cExtension} ")
+                .default("or ")
+                .cyan(f"{srcPath}.{cfg.cxxExtension} ")
+                .default("exists!")
+            .exec())
 
     subprocess.run ([
         f"clang{"++" if containsCxx else ""}",
