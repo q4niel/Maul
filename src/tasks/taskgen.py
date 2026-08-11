@@ -8,12 +8,12 @@ def genLinuxBash(tsk: str): return (
 )
 
 def task() -> None:
-    if os.path.exists("mnt/.maul"):
-        shutil.rmtree("mnt/.maul")
+    if not os.path.exists(maulDir:= "mnt/.maul"):
+        os.mkdir(maulDir)
 
-    os.makedirs("mnt/.maul")
-    os.makedirs("mnt/.maul/out")
-    os.makedirs("mnt/.maul/tasks")
+    if os.path.exists(tasksDir:= f"{maulDir}/tasks"):
+        shutil.rmtree(tasksDir)
+    os.mkdir(tasksDir)
 
     tasks: list[str] = os.listdir("tasks")
     tasks.remove("__init__.py")
@@ -24,7 +24,7 @@ def task() -> None:
         case util.LocalConfig.TaskType.linuxShell:
             for task in tasks:
                 def gen(t: str) -> None:
-                    with open(f"mnt/.maul/tasks/{t.replace(" ", "_")}.sh", "wb") as file:
+                    with open(f"{tasksDir}/{t.replace(" ", "_")}.sh", "wb") as file:
                         file.write(genLinuxBash(t).encode("utf-8"))
 
                 t: str = task.removesuffix(".py")

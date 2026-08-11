@@ -13,19 +13,10 @@ def task(builder: str) -> None:
         return
 
     if not os.path.exists(maulDir:= "mnt/.maul"):
-        (util.Printer()
-            .red("| Error: ")
-            .default("Directory ")
-            .cyan(maulDir)
-            .default(" does not exist!")
-            .newline()
+        os.mkdir(maulDir)
 
-            .red("| ")
-            .default("Have the ")
-            .cyan("taskgen ")
-            .default("task been ran?")
-        .exec())
-        return
+    if not os.path.exists(outDir:= f"{maulDir}/out"):
+        os.mkdir(outDir)
 
     if os.path.exists(workerDir:= f"{maulDir}/worker"):
         shutil.rmtree(workerDir)
