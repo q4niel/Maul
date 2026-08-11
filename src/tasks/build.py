@@ -37,6 +37,9 @@ def task(builder: str) -> None:
             .default(" has no definition in config")
         .exec())
     else:
+        for dir in cfg.builders[builder].mkdirs:
+            os.makedirs(f"{buildDir}/{dir}")
+
         for binData in cfg.builders[builder].binaries:
             if binData.dst != "":
                 os.makedirs(buildDir:= f"{buildDir}/{binData.dst}")

@@ -14,6 +14,7 @@ class Builder:
         self.linkFlags: list[str] = []
         self.linkCFlags: list[str] = []
         self.linkCxxFlags: list[str] = []
+        self.mkdirs: list[str] = []
         self.binaries: list[Builder.BinData] = []
     #__init__()
 #class Builder

@@ -146,6 +146,9 @@ class Config:
                     case "link_cxx_flags":
                         bld.linkCxxFlags = v
 
+                    case "mkdirs":
+                        bld.mkdirs = v
+
                     case "binaries":
                         for b in v:
                             if b["bin"] not in Config.binaries:
