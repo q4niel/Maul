@@ -1,11 +1,11 @@
 global_comp_c_flags = ["-std=c23"]
 
 [builder.release]
-binaries = ["hello_world"]
+binaries = [{bin="hello_world"}]
 
 [builder.debug]
 comp_flags = ["-DDEBUG"]
-binaries = ["hello_world"]
+binaries = [{bin="hello_world"}]
 
 [binary.hello_world]
 type = "executable"

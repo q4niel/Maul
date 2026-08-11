@@ -1,4 +1,11 @@
+from dataclasses import dataclass
+
 class Builder:
+    @dataclass
+    class BinData:
+        bin: str
+        dst: str
+
     def __init__(self) -> None:
         self.name: str = ""
         self.compFlags: list[str] = []
@@ -7,6 +14,6 @@ class Builder:
         self.linkFlags: list[str] = []
         self.linkCFlags: list[str] = []
         self.linkCxxFlags: list[str] = []
-        self.binaries: list[str] = []
+        self.binaries: list[Builder.BinData] = []
     #__init__()
 #class Builder

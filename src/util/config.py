@@ -147,19 +147,24 @@ class Config:
                         bld.linkCxxFlags = v
 
                     case "binaries":
-                        for string in v:
-                            if string not in Config.binaries:
+                        for b in v:
+                            if b["bin"] not in Config.binaries:
                                 (util.Printer()
                                     .red("| Error: ")
                                     .default("Use of undefined binary ")
-                                    .cyan(string)
+                                    .cyan(b["bin"])
                                     .default(" in builder ")
                                     .cyan(bld.name)
                                 .exec())
                                 Config.isValid = False
                                 break
                             else:
-                                bld.binaries.append(string)
+                                bld.binaries.append (
+                                    util.Builder.BinData (
+                                        b["bin"],
+                                        b.get("dst", "")
+                                    )
+                                )
             if bld.name in Config.builders:
                 (util.Printer()
                     .red("| Error: ")
