@@ -22,6 +22,13 @@ def task(builder: str) -> None:
         shutil.rmtree(workerDir)
     os.mkdir(workerDir)
 
+    buildIndex: int = -1
+    for build in os.listdir(outDir):
+        if (b:= int(build)) > buildIndex:
+            buildIndex = b
+
+    os.mkdir(buildDir:= f"{outDir}/{buildIndex+1}")
+
     if builder not in cfg.builders:
         (util.Printer()
             .red("| Error: ")
@@ -31,12 +38,17 @@ def task(builder: str) -> None:
         .exec())
     else:
         for bin in cfg.builders[builder].binaries:
-            buildBin(cfg.builders[builder], cfg.binaries[bin], workerDir)
+            buildBin (
+                cfg.builders[builder],
+                cfg.binaries[bin],
+                workerDir,
+                buildDir
+            )
 
     shutil.rmtree(workerDir)
 #task()
 
-def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str) -> None:
+def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str) -> None:
     containsCxx: bool = False
 
     for src in bin.sources:
@@ -102,6 +114,6 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str) -> None:
         ),
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
         "-o",
-        f"mnt/.maul/out/{bin.filename}"
+        f"{buildDir}/{bin.filename}"
     ])
 #buildBin()
