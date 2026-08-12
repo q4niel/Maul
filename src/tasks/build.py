@@ -77,16 +77,17 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                     )
                 ),
                 "-c",
-                f"{srcPath}.{cfg.cxxExtension if cxx else cfg.cExtension}",
+                path,
                 "-o",
                 f"{workerDir}/{f"{bin.sourceDirectory}/{src}".replace("/", "__")}.o"
             ])
+        #compile()
 
-        if os.path.exists(nPath:= f"{srcPath}.{cfg.cExtension}"):
-            compile(False, nPath)
-        elif os.path.exists(nPath:= f"{srcPath}.{cfg.cxxExtension}"):
+        if os.path.exists(p:= f"{srcPath}.{cfg.cExtension}"):
+            compile(False, p)
+        elif os.path.exists(p:= f"{srcPath}.{cfg.cxxExtension}"):
             containsCxx = True
-            compile(True, nPath)
+            compile(True, p)
         else:
             (util.Printer()
                 .red("| Error: ")
