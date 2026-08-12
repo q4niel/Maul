@@ -41,13 +41,12 @@ def task(builder: str) -> None:
             os.makedirs(f"{buildDir}/{dir}")
 
         for binData in cfg.builders[builder].binaries:
-            if binData.dst != "":
-                os.makedirs(buildDir:= f"{buildDir}/{binData.dst}")
-
             buildBin (
                 cfg.builders[builder],
                 cfg.binaries[binData.bin],
                 workerDir,
+                f"{buildDir}/{binData.dst}"
+                    if binData.dst != "" else
                 buildDir
             )
 
@@ -101,6 +100,9 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 .cyan(f"{srcPath}.{cfg.cxxExtension} ")
                 .default("exists!")
             .exec())
+
+    if not os.path.exists(buildDir):
+        os.makedirs(buildDir)
 
     subprocess.run ([
         f"clang{"++" if containsCxx else ""}",
