@@ -3,6 +3,7 @@ import shutil
 import util
 from util import Config as cfg
 import subprocess
+from datetime import datetime
 
 def task(builder: str) -> None:
     if not cfg.isValid:
@@ -22,12 +23,10 @@ def task(builder: str) -> None:
         shutil.rmtree(workerDir)
     os.mkdir(workerDir)
 
-    buildIndex: int = -1
-    for build in os.listdir(outDir):
-        if (b:= int(build)) > buildIndex:
-            buildIndex = b
-
-    os.mkdir(buildDir:= f"{outDir}/{buildIndex+1}")
+    now: str = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    buildDir: str = f"{outDir}/{now}"
+    with open(f"{outDir}/LATEST", "wb") as file:
+        file.write(now.encode("utf-8"))
 
     if builder not in cfg.builders:
         (util.Printer()
