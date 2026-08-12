@@ -4,6 +4,7 @@ import util
 from util import Config as cfg
 import subprocess
 from datetime import datetime
+from typing import Any
 
 def task(builder: str) -> None:
     if not cfg.isValid:
@@ -23,10 +24,7 @@ def task(builder: str) -> None:
         shutil.rmtree(workerDir)
     os.mkdir(workerDir)
 
-    now: str = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    buildDir: str = f"{outDir}/{now}"
-    with open(f"{outDir}/LATEST", "wb") as file:
-        file.write(now.encode("utf-8"))
+    buildDir: str = f"{outDir}/MAUL_BUILDER"
 
     if builder not in cfg.builders:
         (util.Printer()
@@ -39,15 +37,35 @@ def task(builder: str) -> None:
         for dir in cfg.builders[builder].mkdirs:
             os.makedirs(f"{buildDir}/{dir}")
 
+        potentialExec: Any = None
+        execDst: str = ""
+
         for binData in cfg.builders[builder].binaries:
             buildBin (
                 cfg.builders[builder],
-                cfg.binaries[binData.bin],
+                bin:= cfg.binaries[binData.bin],
                 workerDir,
                 f"{buildDir}/{binData.dst}"
                     if binData.dst != "" else
                 buildDir
             )
+
+            if bin.type == util.Binary.Type.executable:
+                potentialExec = bin
+                execDst = binData.dst
+
+        timestamp: str = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
+        if potentialExec != None:
+            with open(f"{outDir}/LATEST_BUILD", "wb") as file:
+                content: str = (
+                    f"{timestamp}/{execDst}{
+                        "/" if execDst != "" else ""
+                    }{potentialExec.filename}"
+                )
+                file.write(content.encode("utf-8"))
+
+        os.rename(f"{outDir}/MAUL_BUILDER", f"{outDir}/{timestamp}")
 
     shutil.rmtree(workerDir)
 #task()
