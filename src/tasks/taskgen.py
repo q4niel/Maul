@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 import util
 
 def genLinuxBash(tsk: str): return (
@@ -15,24 +16,29 @@ def task() -> None:
         shutil.rmtree(tasksDir)
     os.mkdir(tasksDir)
 
-    tasks: list[str] = os.listdir("tasks")
-    tasks.remove("__init__.py")
-    if (foo:= "__pycache__") in tasks:
-        tasks.remove(foo)
+    pyTasks: list[str] = []
+
+    for path in Path("tasks").iterdir():
+        if (path.name in ("__init__.py", "__pycache__")
+        or  path.is_dir()
+        ): continue
+
+        pyTasks.append(path.stem)
 
     match util.LocalConfig.taskType:
         case util.LocalConfig.TaskType.linuxShell:
-            for task in tasks:
+            for py in pyTasks:
                 def gen(t: str) -> None:
                     with open(f"{tasksDir}/{t.replace(" ", "_")}.sh", "wb") as file:
                         file.write(genLinuxBash(t).encode("utf-8"))
 
-                t: str = task.removesuffix(".py")
-
-                if t == "build":
+                if py == "build":
                     for bldr in util.Config.builders:
-                        gen(f"{t} {bldr}")
+                        gen(f"{py} {bldr}")
                     continue
 
-                gen(t)
+                gen(py)
+
+            for sh in os.listdir(prefix:= "tasks/linux_shell"):
+                shutil.copy(f"{prefix}/{sh}", tasksDir)
 #task()
