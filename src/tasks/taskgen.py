@@ -60,6 +60,6 @@ def task() -> None:
 
                 gen(py)
 
-                for bat in os.listdir(prefix:= "tasks/windows_batch"):
-                    shutil.copy(f"{prefix}/{bat}", tasksDir)
+                for script in os.listdir(prefix:= "tasks/windows_batch"):
+                    shutil.copy(f"{prefix}/{script}", tasksDir)
 #task()
