@@ -44,7 +44,7 @@ def task() -> None:
 
                 gen(py)
 
-            for sh in os.listdir(prefix:= "tasks/linux_shell"):
+            for sh in os.listdir(prefix:= "tasks/linux"):
                 shutil.copy(f"{prefix}/{sh}", tasksDir)
 
         case util.LocalConfig.TaskType.windowsBatch:
@@ -60,6 +60,6 @@ def task() -> None:
 
                 gen(py)
 
-                for script in os.listdir(prefix:= "tasks/windows_batch"):
+                for script in os.listdir(prefix:= "tasks/winblows"):
                     shutil.copy(f"{prefix}/{script}", tasksDir)
 #task()
