@@ -8,6 +8,11 @@ def genLinuxBash(tsk: str): return (
     f"{util.LocalConfig.containerEngine} run -itv $(realpath -m $0/../../..):/Maul/mnt maul:latest --{tsk}"
 )
 
+def genWindowsBatch(tsk: str): return (
+    "@echo off\n"
+    f"{util.LocalConfig.containerEngine} run -itv \"%~dp0..\\..:/Maul/mnt\" maul:latest --{tsk}"
+)
+
 def task() -> None:
     if not os.path.exists(maulDir:= "mnt/.maul"):
         os.mkdir(maulDir)
@@ -41,4 +46,20 @@ def task() -> None:
 
             for sh in os.listdir(prefix:= "tasks/linux_shell"):
                 shutil.copy(f"{prefix}/{sh}", tasksDir)
+
+        case util.LocalConfig.TaskType.windowsBatch:
+            for py in pyTasks:
+                def gen(t: str) -> None:
+                    with open(f"{tasksDir}/{t.replace(" ", "_")}.bat", "wb") as file:
+                        file.write(genWindowsBatch(t).encode("utf-8"))
+
+                if py == "build":
+                    for bldr in util.Config.builders:
+                        gen(f"{py} {bldr}")
+                    continue
+
+                gen(py)
+
+                for bat in os.listdir(prefix:= "tasks/windows_batch"):
+                    shutil.copy(f"{prefix}/{bat}", tasksDir)
 #task()

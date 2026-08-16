@@ -186,6 +186,7 @@ class LocalConfig:
     class TaskType(Enum):
         none = 0
         linuxShell = 1
+        windowsBatch = 2
     #class TaskType
 
     isValid: bool = True
@@ -235,6 +236,8 @@ class LocalConfig:
                     match value:
                         case "linux_shell":
                             LocalConfig.taskType = LocalConfig.TaskType.linuxShell
+                        case "windows_batch":
+                            LocalConfig.taskType = LocalConfig.TaskType.windowsBatch
                         case _:
                             (util.Printer()
                                 .red("| Error: ")
