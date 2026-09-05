@@ -1,36 +1,23 @@
 global_comp_c_flags = ["-std=c23"]
 
 [builder.linux_release]
+platform = "linux"
 comp_flags = ["-DPLATFORM_LINUX"]
 binaries = [{bin="hello_world"}]
 
 [builder.linux_debug]
+platform = "linux"
 comp_flags = ["-DPLATFORM_LINUX", "-DDEBUG"]
 binaries = [{bin="hello_world"}]
 
 [builder.windows_release]
-comp_flags = [
-    "-DPLATFORM_WINDOWS",
-    "-target",
-    "x86_64-w64-mingw32"
-]
-link_flags = [
-    "-target",
-    "x86_64-w64-mingw32"
-]
+platform = "windows"
+comp_flags = ["-DPLATFORM_WINDOWS"]
 binaries = [{bin="hello_world"}]
 
 [builder.windows_debug]
-comp_flags = [
-    "-DPLATFORM_WINDOWS",
-    "-DDEBUG",
-    "-target",
-    "x86_64-w64-mingw32"
-]
-link_flags = [
-    "-target",
-    "x86_64-w64-mingw32"
-]
+platform = "windows"
+comp_flags = ["-DPLATFORM_WINDOWS", "-DDEBUG"]
 binaries = [{bin="hello_world"}]
 
 [binary.hello_world]

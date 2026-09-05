@@ -130,8 +130,32 @@ class Config:
             bld: util.Builder = util.Builder()
             bld.name = name
 
+            if "platform" not in info:
+                (util.Printer()
+                    .red("| Error: ")
+                    .cyan("platform ")
+                    .default("has not been defined for builder ")
+                    .cyan(bld.name)
+                .exec())
+                Config.isValid = False
+            else:
+                match plat:= info["platform"]:
+                    case "linux":
+                        bld.platform = util.Builder.Platform.Linux
+                    case "windows":
+                        bld.platform = util.Builder.Platform.Windows
+                    case _:
+                        (util.Printer()
+                            .red("| Error: ")
+                            .cyan(f"platform {plat}")
+                            .default(" is unknown or unsupported")
+                        .exec())
+                        Config.isValid = False
+
             for k, v in info.items():
                 match k:
+                    case "platform":
+                        continue
                     case "comp_flags":
                         bld.compFlags = v
                     case "comp_c_flags":

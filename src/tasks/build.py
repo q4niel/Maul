@@ -70,15 +70,25 @@ def task(builder: str) -> None:
     shutil.rmtree(workerDir)
 #task()
 
+def getCompiler(bldr: util.Builder, cxx: bool) -> str:
+    r: str = ""
+    match bldr.platform:
+        case util.Builder.Platform.Linux:
+            r = "clang"
+        case util.Builder.Platform.Windows:
+            r = "/opt/llvm-mingw/bin/x86_64-w64-mingw32-clang"
+
+    return r + "++" if cxx else r
+
 def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str) -> None:
-    containsCxx: bool = False
+    linkAsCxx: bool = False
 
     for src in bin.sources:
         srcPath: str = f"mnt/{bin.sourceDirectory}/{src}"
 
         def compile(cxx: bool, path: str):
             subprocess.run ([
-                f"clang{"++" if cxx else ""}",
+                getCompiler(bldr, cxx),
                 *(
                     cfg.globalCompFlags +
                     bin.compFlags +
@@ -103,7 +113,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         if os.path.exists(p:= f"{srcPath}.{cfg.cExtension}"):
             compile(False, p)
         elif os.path.exists(p:= f"{srcPath}.{cfg.cxxExtension}"):
-            containsCxx = True
+            linkAsCxx = True
             compile(True, p)
         else:
             (util.Printer()
@@ -123,7 +133,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         os.makedirs(buildDir)
 
     subprocess.run ([
-        f"clang{"++" if containsCxx else ""}",
+        getCompiler(bldr, linkAsCxx),
         *(
             cfg.globalLinkFlags +
             bin.linkFlags +
@@ -132,7 +142,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 cfg.globalLinkCxxFlags +
                 bin.linkCxxFlags +
                 bldr.linkCxxFlags
-                if containsCxx else
+                if linkAsCxx else
                 cfg.globalLinkCFlags +
                 bin.linkCFlags +
                 bldr.linkCFlags
