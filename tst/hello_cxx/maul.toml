@@ -2,11 +2,24 @@ hxx_extension = "hxx"
 cxx_extension = "cxx"
 global_comp_cxx_flags = ["-std=c++23"]
 
-[builder.release]
+[builder.linux_release]
+platform = "linux"
+comp_flags = ["-DPLATFORM_LINUX"]
 binaries = [{bin="hello_world"}]
 
-[builder.debug]
-comp_flags = ["-DDEBUG"]
+[builder.linux_debug]
+platform = "linux"
+comp_flags = ["-DPLATFORM_LINUX", "-DDEBUG"]
+binaries = [{bin="hello_world"}]
+
+[builder.windows_release]
+platform = "windows"
+comp_flags = ["-DPLATFORM_WINDOWS"]
+binaries = [{bin="hello_world"}]
+
+[builder.windows_debug]
+platform = "windows"
+comp_flags = ["-DPLATFORM_WINDOWS", "-DDEBUG"]
 binaries = [{bin="hello_world"}]
 
 [binary.hello_world]
