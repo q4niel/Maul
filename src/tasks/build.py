@@ -34,34 +34,25 @@ def task(builder: str) -> None:
             .default(" has no definition in config")
         .exec())
     else:
-        for dir in cfg.builders[builder].mkdirs:
-            os.makedirs(f"{buildDir}/{dir}")
-
         potentialExec: Any = None
-        execDst: str = ""
 
-        for binData in cfg.builders[builder].binaries:
+        for binary in cfg.builders[builder].binaries:
             buildBin (
                 cfg.builders[builder],
-                bin:= cfg.binaries[binData.bin],
+                bin:= cfg.binaries[binary],
                 workerDir,
-                f"{buildDir}/{binData.dst}"
-                    if binData.dst != "" else
                 buildDir
             )
 
             if bin.type == util.Binary.Type.executable:
                 potentialExec = bin
-                execDst = binData.dst
 
         timestamp: str = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         if potentialExec != None:
             with open(f"{outDir}/LATEST_BUILD", "wb") as file:
                 content: str = (
-                    f"{timestamp}/{execDst}{
-                        "/" if execDst != "" else ""
-                    }{potentialExec.filename}"
+                    f"{timestamp}/{potentialExec.filename}"
                 )
                 file.write(content.encode("utf-8"))
 

@@ -5,22 +5,22 @@ global_comp_cxx_flags = ["-std=c++23"]
 [builder.linux_release]
 platform = "linux"
 comp_flags = ["-DPLATFORM_LINUX"]
-binaries = [{bin="hello_world"}]
+binaries = ["hello_world"]
 
 [builder.linux_debug]
 platform = "linux"
 comp_flags = ["-DPLATFORM_LINUX", "-DDEBUG"]
-binaries = [{bin="hello_world"}]
+binaries = ["hello_world"]
 
 [builder.windows_release]
 platform = "windows"
 comp_flags = ["-DPLATFORM_WINDOWS"]
-binaries = [{bin="hello_world"}]
+binaries = ["hello_world"]
 
 [builder.windows_debug]
 platform = "windows"
 comp_flags = ["-DPLATFORM_WINDOWS", "-DDEBUG"]
-binaries = [{bin="hello_world"}]
+binaries = ["hello_world"]
 
 [binary.hello_world]
 type = "executable"

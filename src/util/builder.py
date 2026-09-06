@@ -6,11 +6,6 @@ class Builder:
         Linux = 0,
         Windows = 1
 
-    @dataclass
-    class BinData:
-        bin: str
-        dst: str
-
     def __init__(self) -> None:
         self.name: str = ""
         self.platform:Builder.Platform = Builder.Platform.Linux
@@ -20,7 +15,6 @@ class Builder:
         self.linkFlags: list[str] = []
         self.linkCFlags: list[str] = []
         self.linkCxxFlags: list[str] = []
-        self.mkdirs: list[str] = []
-        self.binaries: list[Builder.BinData] = []
+        self.binaries: list[str] = []
     #__init__()
 #class Builder
