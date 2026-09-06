@@ -24,7 +24,7 @@ def task(builder: str) -> None:
         shutil.rmtree(workerDir)
     os.mkdir(workerDir)
 
-    buildDir: str = f"{outDir}/MAUL_BUILDER"
+    os.mkdir(buildDir:= f"{outDir}/MAUL_BUILDER")
 
     if builder not in cfg.builders:
         (util.Printer()
@@ -52,11 +52,11 @@ def task(builder: str) -> None:
         if potentialExec != None:
             with open(f"{outDir}/LATEST_BUILD", "wb") as file:
                 content: str = (
-                    f"{timestamp}/{potentialExec.filename}"
+                    f"{timestamp}/bin/{potentialExec.filename}"
                 )
                 file.write(content.encode("utf-8"))
 
-        os.rename(f"{outDir}/MAUL_BUILDER", f"{outDir}/{timestamp}")
+        os.rename(buildDir, f"{outDir}/{timestamp}")
 
     shutil.rmtree(workerDir)
 #task()
@@ -73,6 +73,7 @@ def getCompiler(bldr: util.Builder, cxx: bool) -> str:
 
 def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str) -> None:
     linkAsCxx: bool = False
+    os.mkdir(binDir:= f"{buildDir}/bin")
 
     for src in bin.sources:
         srcPath: str = f"mnt/{bin.sourceDirectory}/{src}"
@@ -120,9 +121,6 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 .default("exists!")
             .exec())
 
-    if not os.path.exists(buildDir):
-        os.makedirs(buildDir)
-
     subprocess.run ([
         getCompiler(bldr, linkAsCxx),
         *(
@@ -141,6 +139,6 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         ),
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
         "-o",
-        f"{buildDir}/{bin.filename}"
+        f"{binDir}/{bin.filename}"
     ])
 #buildBin()
