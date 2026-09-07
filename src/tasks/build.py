@@ -129,6 +129,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 (util.Printer()
                     .green(" OK")
                     .default(" ]")
+                    .newline()
                 .exec())
         #compile()
 
@@ -151,7 +152,13 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 .default("exists!")
             .exec())
 
-    subprocess.run ([
+    (util.Printer()
+        .magenta("| Linking ")
+        .cyan(bin.name)
+        .default(" [...]")
+    .exec(False))
+
+    procArgs: list[str] = [
         getCompiler(bldr, linkAsCxx),
         *(
             cfg.globalLinkFlags +
@@ -170,5 +177,29 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
         "-o",
         f"{binDir}/{bin.filename}"
-    ])
+    ]
+
+    callback: subprocess.CompletedProcess[str] = subprocess.run (
+        procArgs,
+        capture_output=True,
+        text=True
+    )
+
+    sys.stdout.write("\033[4D")
+    sys.stdout.flush()
+
+    if callback.returncode != 0:
+        (util.Printer()
+            .red(" FAIL")
+            .default(" ]")
+            .newline()
+            .default(callback.stderr)
+            .newline()
+        .exec())
+    else:
+        (util.Printer()
+            .green(" OK")
+            .default(" ]")
+            .newline()
+        .exec())
 #buildBin()
