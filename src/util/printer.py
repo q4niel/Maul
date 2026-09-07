@@ -5,9 +5,12 @@ class Printer:
         self.string: str = ""
     #__init__()
 
-    def exec(self) -> None:
+    def exec(self, newline=True) -> None:
         if self.string == "": return
-        print(self.string)
+        if newline:
+            print(self.string, flush=True)
+        else:
+            print(self.string, flush=True, end="")
     #exec()
 
     def default(self, string: str) -> Self:
@@ -31,6 +34,10 @@ class Printer:
 
     def red(self, string: str) -> Self:
         self.string += self.retrieveCoded("31", string)
+        return self
+
+    def green(self, string:str) -> Self:
+        self.string += self.retrieveCoded("32", string)
         return self
 
     def cyan(self, string: str) -> Self:

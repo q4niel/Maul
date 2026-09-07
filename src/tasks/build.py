@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import util
 from util import Config as cfg
@@ -79,7 +80,13 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         srcPath: str = f"mnt/{bin.sourceDirectory}/{src}"
 
         def compile(cxx: bool, path: str):
-            subprocess.run ([
+            (util.Printer()
+                .magenta("| Compiling ")
+                .cyan(path)
+                .default(" [...]")
+            .exec(False))
+
+            procArgs: list[str] = [
                 getCompiler(bldr, cxx),
                 *(
                     cfg.globalCompFlags +
@@ -99,7 +106,30 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 path,
                 "-o",
                 f"{workerDir}/{f"{bin.sourceDirectory}/{src}".replace("/", "__")}.o"
-            ])
+            ]
+
+            callback: subprocess.CompletedProcess[str] = subprocess.run (
+                procArgs,
+                capture_output=True,
+                text=True
+            )
+
+            sys.stdout.write("\033[4D")
+            sys.stdout.flush()
+
+            if callback.returncode != 0:
+                (util.Printer()
+                    .red(" FAIL")
+                    .default(" ]")
+                    .newline()
+                    .default(callback.stderr)
+                    .newline()
+                .exec())
+            else:
+                (util.Printer()
+                    .green(" OK")
+                    .default(" ]")
+                .exec())
         #compile()
 
         if os.path.exists(p:= f"{srcPath}.{cfg.cExtension}"):
