@@ -183,8 +183,20 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         .default(" [...]")
     .exec(False))
 
+    startfile: str = ""
+    match bldr.platform:
+        case util.Builder.Platform.Linux:
+            startfile = "starts/linux_x86-64_start.o"
+        case util.Builder.Platform.Windows:
+            pass
+
     procArgs: list[str] = [
         getCompiler(bldr, linkAsCxx),
+        "-nostdlib" if not linkAsCxx else "",
+        "-nodefaultlibs" if not linkAsCxx else "",
+        "-nostartfiles" if not linkAsCxx else "",
+        "-L/usr/lib" if not linkAsCxx else "",
+        "-l:libc.so" if not linkAsCxx else "",
         *(
             cfg.globalLinkFlags +
             bin.linkFlags +
@@ -199,6 +211,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 bldr.linkCFlags
             )
         ),
+        startfile,
         *(f"{workerDir}/{o}" for o in os.listdir(workerDir)),
         "-o",
         f"{binDir}/{bin.filename}"

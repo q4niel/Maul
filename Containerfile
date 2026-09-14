@@ -7,4 +7,5 @@ WORKDIR /Maul
 RUN wget https://github.com/mstorsjo/llvm-mingw/releases/download/20260826/llvm-mingw-20260826-msvcrt-ubuntu-22.04-x86_64.tar.xz
 RUN mkdir /opt/llvm-mingw
 RUN tar -xf llvm-mingw-20260826-msvcrt-ubuntu-22.04-x86_64.tar.xz -C /opt/llvm-mingw --strip-components=1
+RUN clang -c starts/linux_x86-64_start.asm -o starts/linux_x86-64_start.o
 ENTRYPOINT ["python3", "main.py"]
