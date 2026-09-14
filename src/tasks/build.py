@@ -77,6 +77,12 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
     os.mkdir(binDir:= f"{buildDir}/bin")
 
     for src in bin.sources:
+        explicitPath: bool = False
+
+        if src.startswith(":"):
+            src = src.removeprefix(":")
+            explicitPath = True
+
         srcPath: str = f"mnt/{bin.sourceDirectory}/{src}"
 
         def compile(cxx: bool, path: str):
@@ -133,7 +139,21 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 .exec())
         #compile()
 
-        if os.path.exists(p:= f"{srcPath}.{cfg.cExtension}"):
+        if explicitPath:
+            if os.path.exists(srcPath):
+                compile(linkAsCxx:=srcPath.endswith(cfg.cxxExtension), srcPath)
+            else:
+                (util.Printer()
+                    .red("| Error: ")
+                    .default("Unresolved Source Path")
+                    .newline()
+
+                    .red("| ")
+                    .default("Source ")
+                    .cyan(srcPath)
+                    .default(" does not exist!")
+                .exec())
+        elif os.path.exists(p:= f"{srcPath}.{cfg.cExtension}"):
             compile(False, p)
         elif os.path.exists(p:= f"{srcPath}.{cfg.cxxExtension}"):
             linkAsCxx = True
@@ -145,11 +165,16 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
                 .newline()
 
                 .red("| ")
-                .default("Neither ")
+                .default("Could not find infered ")
                 .cyan(f"{srcPath}.{cfg.cExtension} ")
                 .default("or ")
-                .cyan(f"{srcPath}.{cfg.cxxExtension} ")
-                .default("exists!")
+                .cyan(f"{srcPath}.{cfg.cxxExtension}")
+                .newline()
+
+                .red("| ")
+                .default("Use ")
+                .cyan(": (:my_source.c) ")
+                .default("for exlicit file usage")
             .exec())
 
     (util.Printer()
