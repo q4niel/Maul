@@ -183,20 +183,26 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         .default(" [...]")
     .exec(False))
 
-    stdLibPaths: list[str] = []
+    stdLibPath: str = ""
     stdLibs: list[str] = []
     startfile: str = ""
 
     match bldr.platform:
         case util.Builder.Platform.Linux:
-            stdlibPaths = ["-L/usr/lib"]
-            stdLibs = ["-l:libc.so"]
+            stdLibPath = "-L/usr/lib"
+            stdLibs = ["-l:libc.so.6"]
             startfile = "starts/linux_x86-64_start.o"
 
             if linkAsCxx:
                 stdLibs.append("-l:libstdc++.so")
                 stdLibs.append("-l:libm.so")
                 stdLibs.append("-l:libgcc_s.so")
+
+            for l in stdLibs:
+                _ = shutil.copy (
+                    f"{stdLibPath.removeprefix("-L")}/{l.removeprefix("-l:")}",
+                    binDir
+                )
 
         case util.Builder.Platform.Windows:
             pass
@@ -206,7 +212,7 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         "-nostdlib",
         "-nodefaultlibs",
         "-nostartfiles",
-        *stdLibPaths,
+        stdLibPath,
         *stdLibs,
         *(
             cfg.globalLinkFlags +
