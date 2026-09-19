@@ -4,9 +4,15 @@
       - linux (insert green checkmark)
       - windows (insert red cross)
     - cxx
-      - linux (insert green cross)
+      - linux (insert green checkmark)
       - windows (insert red cross)
   - shared dep libs transfer
+    - c
+      - linux (insert red cross)
+      - windows (insert red cross)
+    - cxx
+      - linux (insert red cross)
+      - windows (insert red cross)
   - shared dep libs license transfer, potentially fetching
 
 # Vendor Fetch
