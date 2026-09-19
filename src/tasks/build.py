@@ -183,20 +183,31 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
         .default(" [...]")
     .exec(False))
 
+    stdLibPaths: list[str] = []
+    stdLibs: list[str] = []
     startfile: str = ""
+
     match bldr.platform:
         case util.Builder.Platform.Linux:
+            stdlibPaths = ["-L/usr/lib"]
+            stdLibs = ["-l:libc.so"]
             startfile = "starts/linux_x86-64_start.o"
+
+            if linkAsCxx:
+                stdLibs.append("-l:libstdc++.so")
+                stdLibs.append("-l:libm.so")
+                stdLibs.append("-l:libgcc_s.so")
+
         case util.Builder.Platform.Windows:
             pass
 
     procArgs: list[str] = [
         getCompiler(bldr, linkAsCxx),
-        "-nostdlib" if not linkAsCxx else "",
-        "-nodefaultlibs" if not linkAsCxx else "",
-        "-nostartfiles" if not linkAsCxx else "",
-        "-L/usr/lib" if not linkAsCxx else "",
-        "-l:libc.so" if not linkAsCxx else "",
+        "-nostdlib",
+        "-nodefaultlibs",
+        "-nostartfiles",
+        *stdLibPaths,
+        *stdLibs,
         *(
             cfg.globalLinkFlags +
             bin.linkFlags +
