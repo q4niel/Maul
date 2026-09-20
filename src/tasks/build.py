@@ -192,9 +192,9 @@ def buildBin(bldr: util.Builder, bin: util.Binary, workerDir: str, buildDir: str
             startfile = "starts/linux_x86-64_start.o"
 
             if linkAsCxx:
-                stdLibs.append("-l:libstdc++.so")
-                stdLibs.append("-l:libm.so")
-                stdLibs.append("-l:libgcc_s.so")
+                stdLibs.append("-l:libstdc++.so.6")
+                stdLibs.append("-l:libm.so.6")
+                stdLibs.append("-l:libgcc_s.so.1")
 
             for l in stdLibs:
                 _ = shutil.copy (

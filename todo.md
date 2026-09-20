@@ -11,7 +11,7 @@
       - linux (insert green checkmark)
       - windows (insert red cross)
     - cxx
-      - linux (insert red cross)
+      - linux (insert green checkmark)
       - windows (insert red cross)
   - shared dep libs license transfer, potentially fetching
 
